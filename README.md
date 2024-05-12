@@ -83,6 +83,13 @@ moveGifUrl: string;
 
 2. User
 
-- A
-- B
+- 사용자간의 반려동물 게시 공유
+-
+
+---
+
+#### 이미지 작업
+
+디자인 사용된 이미지들 출처 - Ai 이미지 제작 요청 및 수정
+
 # RN-animal-games
