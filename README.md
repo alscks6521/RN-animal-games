@@ -14,7 +14,8 @@
 <img src="./images/pixel_characters/cat/cats.png" width="35%">
 <img src="./images/pixel_characters/dog/dogs.png" width="35%">
 <img src="./images/pixel_characters/panda/pandas.png" width="35%">
-<img src="./images/pixel_characters/penguin/penguin.webp" width="35%">
+<img src="./images/pixel_characters/penguin/penguin.png" width="35%">
   
 **배경 픽셀 이미지**
+
 <img src="images/backgrounds/home/livigbackground.png" width="35%">
