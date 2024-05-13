@@ -7,6 +7,8 @@
 
 1. 배경
 
-<img src="./images/pixel characters/panda/pandas.png">
+<img src="./images/pixel characters/panda/pandas.png" width="35%">
 
 ![판다 GIF](./images/pixel characters/panda/panda1_moves/panda_move.gif)
+
+<img src="images/backgrounds/home/livigbackground.png" width="35%">
