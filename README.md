@@ -84,12 +84,17 @@ moveGifUrl: string;
 2. User
 
 - 사용자간의 반려동물 게시 공유
--
-
----
+- ***
 
 #### 이미지 작업
 
 디자인 사용된 이미지들 출처 - Ai 이미지 제작 요청 및 수정
 
-# RN-animal-games
+---
+
+## 프로젝트 파일 내의 Firebase 설정
+
+Firebase를 설정하려면 다음 단계를 따르세요:
+
+1. 템플릿 파일 `firebaseConfig.template.tsx`를 `firebaseConfig.tsx`로 복사합니다.
+2. 값을 실제 Firebase 구성 값으로 바꿉니다.

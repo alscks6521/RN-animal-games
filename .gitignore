@@ -28,7 +28,8 @@ yarn-error.*
 
 # +
 firebaseConfig.tsx
-
+# 템플릿 파일은 무시X
+!firebaseConfig.template.tsx
 
 # macOS
 .DS_Store
