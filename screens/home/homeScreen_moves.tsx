@@ -26,7 +26,6 @@ type Animal = {
   id: string;
   type: string;
   level: number;
-  experience: number;
   imageUrl: string;
   moveGifUrl: string;
   blinkGifUrl: string;
@@ -53,8 +52,8 @@ const LeftBox = styled(View)`
 `;
 const AnimalNameBox = styled(View)`
   background-color: rgba(255, 255, 255, 0.7);
-  border-radius: 0px 15px 15px 0px;
-  margin: 10px 0px 0px 0px;
+  border-radius: 15px;
+  margin: 5px 0px 0px 5px;
 `;
 const AnimalName = styled(Text)`
   font-size: 18px;
@@ -103,48 +102,6 @@ const CreateAccount = styled(Text)`
 // 배경
 const BGImgDir = require("../../assets/livigbackground.png");
 
-const BubbleContainer = styled.View`
-  flex-direction: column;
-  align-items: center;
-  position: absolute;
-  bottom: 200px;
-  z-index: 1;
-`;
-
-// 말풍선 스타일 정의
-const SpeechBubble = styled(View)`
-  background-color: #ffffff;
-  padding: 10px 20px;
-  border-radius: 10px;
-  border-width: 1px;
-  border-color: #cccccc;
-`;
-
-const Tail = styled(View)`
-  width: 20px;
-  height: 20px;
-  background-color: #ffffff;
-  border-left-width: 1px;
-  border-bottom-width: 1px;
-  border-color: #cccccc;
-  transform: rotate(-45deg);
-  margin-top: -10px;
-`;
-
-const SpeechText = styled(Text)`
-  font-size: 16px;
-  color: #333;
-`;
-
-const dialogues = [
-  "안녕하세요!",
-  "오늘 하루도 화이팅해요!",
-  "저는 당신의 친구에요.",
-  "함께 행복한 시간 보내요.",
-  "좋은 하루 되세요!",
-  // 더 많은 대화를 추가할 수 있습니다.
-];
-
 // 캐시 이미지 URI 다운 및 캐시저장
 const fetchCachedImage = async (
   animalType: string,
@@ -190,9 +147,8 @@ const fetchBlinkGifUrl = async (
 
 export default () => {
   const [animal, setAnimal] = useState<Animal | null>(null);
+  const xAnim = useRef(new Animated.Value(0)).current;
   const [animalSource, setAnimalSource] = useState<string | null>(null);
-  const [showSpeechBubble, setShowSpeechBubble] = useState(false);
-  const [randomDialogue, setRandomDialogue] = useState("");
 
   const navigation =
     useNavigation<NativeStackNavigationProp<SelectStackScreenList>>();
@@ -202,61 +158,12 @@ export default () => {
     [navigation]
   );
 
-  const handleImageClick = useCallback(() => {
-    const randomIndex = Math.floor(Math.random() * dialogues.length);
-    setRandomDialogue(dialogues[randomIndex]);
-    setShowSpeechBubble(true);
-
-    // 5초 후에 말풍선 숨기기
-    setTimeout(() => {
-      setShowSpeechBubble(false);
-    }, 5000);
-  }, []);
-
   const levelUp = useCallback(async () => {
     if (animal) {
       const db = getFirestore();
       const animalDocRef = doc(db, "user_animals", animal.id);
       const newLevel = animal.level + 1;
       await updateDoc(animalDocRef, { level: newLevel });
-      fetchSelectedAnimal();
-    }
-  }, [animal]);
-
-  const eatUp = useCallback(async () => {
-    if (animal) {
-      const db = getFirestore();
-      const animalDocRef = doc(db, "user_animals", animal.id);
-      let addExperience = animal.experience + 10;
-      console.log("animal class :" + animal.experience);
-
-      if (addExperience >= 100) {
-        console.log("level up!");
-        await levelUp();
-
-        addExperience = 0;
-      }
-
-      await updateDoc(animalDocRef, { experience: addExperience });
-      fetchSelectedAnimal();
-    }
-  }, [animal]);
-
-  const plays = useCallback(async () => {
-    if (animal) {
-      const db = getFirestore();
-      const animalDocRef = doc(db, "user_animals", animal.id);
-      let addExperience = animal.experience + 10;
-      console.log("animal class :" + animal.experience);
-
-      if (addExperience >= 100) {
-        console.log("level up!");
-        await levelUp();
-
-        addExperience = 0;
-      }
-
-      await updateDoc(animalDocRef, { experience: addExperience });
       fetchSelectedAnimal();
     }
   }, [animal]);
@@ -285,7 +192,6 @@ export default () => {
             const animalData = animalDoc.data();
             const animalType = animalData?.animalId;
             const level = animalData?.level;
-            const experience = animalData?.experience;
             const imagelevel = `${animalType}${level <= 10 ? "1" : "2"}`;
 
             const imageUrl = await fetchCachedImage(
@@ -308,7 +214,6 @@ export default () => {
               id: animalDoc.id,
               type: animalType || "",
               level: level || 0,
-              experience: experience || 0,
               imageUrl,
               moveGifUrl,
               blinkGifUrl,
@@ -322,13 +227,63 @@ export default () => {
       }
     }
   }, []);
+  const rotateAnim = useRef(new Animated.Value(0)); // 애니메이션을 위한 회전 값 관리
+
+  const startMoveAnimation = useCallback(() => {
+    let curn = Math.floor(Math.random() * 150) + 50; // 50부터 200까지의 랜덤한 값
+    console.log(curn);
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(xAnim, {
+          toValue: 0,
+          duration: 1000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(xAnim, {
+          toValue: 1,
+          duration: 900,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(xAnim, {
+          toValue: curn,
+          duration: 3000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rotateAnim.current, {
+          toValue: 1,
+          duration: 0,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+
+        Animated.timing(xAnim, {
+          toValue: 0,
+          duration: 3000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [xAnim]);
 
   useEffect(() => {
-    console.log("useEffect");
-    if (animal?.blinkGifUrl) {
-      setAnimalSource(animal.blinkGifUrl);
+    if (animal?.moveGifUrl && animal?.blinkGifUrl) {
+      xAnim.addListener(({ value }) => {
+        if (value === 0) {
+          setAnimalSource(animal.blinkGifUrl);
+        } else {
+          setAnimalSource(animal.moveGifUrl);
+        }
+      });
+
+      return () => {
+        xAnim.removeAllListeners();
+      };
     }
-  }, [animal?.blinkGifUrl]);
+  }, [animal?.moveGifUrl, animal?.blinkGifUrl, xAnim]);
 
   useFocusEffect(
     useCallback(() => {
@@ -339,28 +294,35 @@ export default () => {
     }, [fetchSelectedAnimal])
   );
 
+  useEffect(() => {
+    if (animal?.moveGifUrl) startMoveAnimation();
+  }, [animal?.moveGifUrl, startMoveAnimation]);
+
   const memoizedMoveImages = useMemo(() => {
     if (animalSource) {
       return (
-        <TouchableOpacity onPress={handleImageClick} activeOpacity={0.95}>
-          <AnimalImage
-            key={0}
-            source={{ uri: animalSource }}
-            resizeMode="contain"
-          />
-          {showSpeechBubble && (
-            <BubbleContainer>
-              <SpeechBubble>
-                <SpeechText>{randomDialogue}</SpeechText>
-              </SpeechBubble>
-              <Tail />
-            </BubbleContainer>
-          )}
-        </TouchableOpacity>
+        <AnimalImage
+          key={0}
+          source={{ uri: animalSource }}
+          style={{
+            transform: [
+              {
+                translateX: xAnim,
+              },
+              {
+                scaleX: rotateAnim.current.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [1, -1],
+                }),
+              },
+            ],
+          }}
+          resizeMode="contain"
+        />
       );
     }
     return null;
-  }, [animalSource, handleImageClick, showSpeechBubble, randomDialogue]);
+  }, [animalSource, xAnim, rotateAnim]);
 
   return animal ? (
     <Container source={BGImgDir}>
@@ -368,16 +330,12 @@ export default () => {
         <LeftBox>
           <AnimalNameBox>
             <AnimalName>{`Level ${animal.level}`}</AnimalName>
-            <AnimalName>{`Xp ${animal.experience}`}</AnimalName>
           </AnimalNameBox>
         </LeftBox>
         <ImageBox>{memoizedMoveImages}</ImageBox>
         <RightBox>
-          <StyledButton onPress={eatUp}>
-            <LevelText>밥주기</LevelText>
-          </StyledButton>
-          <StyledButton onPress={plays}>
-            <LevelText>놀아주기</LevelText>
+          <StyledButton onPress={levelUp}>
+            <LevelText>Level Up</LevelText>
           </StyledButton>
         </RightBox>
       </HomeBox>
