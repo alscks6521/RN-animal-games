@@ -26,7 +26,7 @@ const SignInView = styled(View)`
 
 const Container = styled(View)`
   /* justify-content: center; */
-  align-items: start;
+  align-items: center;
   background-color: #fbf0d0;
   flex: 1;
 `;
@@ -35,13 +35,14 @@ const CreateAccount = styled(Text)`
   color: #4fadff;
   text-decoration: underline;
   text-align: center;
+  font-size: 16px;
   margin-bottom: 10px;
 `;
 
 const TitleImg = styled(Image)`
   background-color: transparent;
   width: 100%;
-  height: 20%;
+  height: 25%;
 `;
 
 const Title = styled(Text)`
@@ -50,25 +51,23 @@ const Title = styled(Text)`
   color: #5a5757;
 `;
 
-const CatImg = styled(Image)`
+const LoginImg = styled(Image)`
   background-color: transparent;
-  opacity: 0.82;
   position: absolute;
-  width: 100%;
-  height: 35%;
-  transform: scale(0.35);
-  top: -6px;
-  left: 40px;
-  z-index: 99;
+  top: -80px;
+  width: 80%;
+  height: 80%;
+  align-items: center;
+  z-index: 0;
 `;
 
 const LoginContainer = styled(View)`
-  background-color: rgba(255, 255, 255, 0.5);
-  margin-top: 37%;
+  background-color: rgb(255, 255, 255);
+  margin-top: 80%;
   width: 88%;
-  height: 70%;
+  height: 50%;
   align-items: start;
-  border-radius: 0px 15px 100px 0px;
+  border-radius: 15px;
   padding: 20px;
 `;
 
@@ -114,19 +113,7 @@ const ErrorMessage = styled(Text)`
   font-size: 15px;
 `;
 
-const FooterContainer = styled(View)`
-  border-top-left-radius: 100px;
-  border-bottom-left-radius: 100px;
-  z-index: 0;
-  height: 60px;
-  width: 200px;
-  background-color: #fff;
-  position: absolute;
-  right: 0;
-  bottom: 10%;
-`;
-
-const SubImgDir = require("../../assets/login-cat.png");
+const SubImgDir = require("../../assets/login_background.png");
 const TitleImgDir = require("../../assets/app-title.png");
 
 export default () => {
@@ -195,7 +182,7 @@ export default () => {
       {/* <CreateAccount onPress={() => goToSignUp()} disabled={loading}>
         {loading ? "Loading..." : "Create Account"}
       </CreateAccount> */}
-      <CatImg source={SubImgDir} />
+      <LoginImg source={SubImgDir} />
       <LoginContainer>
         <TitleImg source={TitleImgDir} resizeMode="contain" />
         {/* <Title>Viutual</Title>
@@ -223,10 +210,9 @@ export default () => {
             </LoginButtonText>
           </LoginButton>
           <ErrorMessage>{error}</ErrorMessage>
-          <CreateAccount onPress={goToSignUp}>Create Account</CreateAccount>
+          <CreateAccount onPress={goToSignUp}>회원가입</CreateAccount>
         </LoginBtnContainer>
       </LoginContainer>
-      <FooterContainer />
     </Container>
   );
 };

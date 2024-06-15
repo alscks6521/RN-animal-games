@@ -15,7 +15,11 @@ export default () => {
   // Stack안에 이동할 페이지 만들어 그룹화
   return (
     <Stack.Navigator>
-      <Stack.Screen name="SignIn" component={signin} />
+      <Stack.Screen
+        name="SignIn"
+        component={signin}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="SignUp" component={signup} />
     </Stack.Navigator>
   );
