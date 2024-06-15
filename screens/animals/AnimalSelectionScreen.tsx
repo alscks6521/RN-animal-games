@@ -12,18 +12,20 @@ import { Image } from "expo-image";
 import { auth } from "../../firebaseConfig";
 
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { useNavigation } from "@react-navigation/native";
 
-interface Animal {
+export type Animal = {
   id: string;
   imageUrl: string;
   type: string;
-}
+};
 
 const db = getFirestore();
 const storage = getStorage();
 
 export default () => {
   const [animals, setAnimals] = useState<Animal[]>([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     console.log("동물 선택 스크린");
@@ -72,6 +74,7 @@ export default () => {
       );
 
       Alert.alert("Animal Selected", `You have selected the ${animal.type}`);
+      navigation.goBack();
     } else {
       Alert.alert("Error", "No user is signed in.");
     }
