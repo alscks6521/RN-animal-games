@@ -33,7 +33,7 @@ const Container = styled(View)`
 
 const CreateAccount = styled(Text)`
   color: #4fadff;
-  text-decoration: underline;
+
   text-align: center;
   font-size: 16px;
   margin-bottom: 10px;
@@ -43,12 +43,6 @@ const TitleImg = styled(Image)`
   background-color: transparent;
   width: 100%;
   height: 25%;
-`;
-
-const Title = styled(Text)`
-  font-size: 50px;
-  font-weight: bold;
-  color: #5a5757;
 `;
 
 const LoginImg = styled(Image)`
@@ -73,8 +67,9 @@ const LoginContainer = styled(View)`
 
 const LoginTitle = styled(Text)`
   font-size: 16px;
-  font-weight: 300;
   margin-top: 30px;
+  font-weight: 700;
+  color: #1a74e8;
   margin-bottom: 15px;
 `;
 
@@ -168,7 +163,7 @@ export default () => {
       setError("");
 
       await signInWithEmailAndPassword(auth, email, password);
-      Alert.alert("Success Login");
+      Alert.alert("로그인을 성공하였습니다.");
     } catch (error) {
       if (error instanceof FirebaseError) setError(error.message);
     } finally {
@@ -179,15 +174,11 @@ export default () => {
 
   return (
     <Container>
-      {/* <CreateAccount onPress={() => goToSignUp()} disabled={loading}>
-        {loading ? "Loading..." : "Create Account"}
-      </CreateAccount> */}
       <LoginImg source={SubImgDir} />
       <LoginContainer>
         <TitleImg source={TitleImgDir} resizeMode="contain" />
-        {/* <Title>Viutual</Title>
-        <Title>Pet Pal</Title> */}
-        <LoginTitle>LOGIN</LoginTitle>
+
+        <LoginTitle>환영합니다!</LoginTitle>
         <LoginInput
           placeholder="Email"
           keyboardType="email-address"
@@ -210,7 +201,7 @@ export default () => {
             </LoginButtonText>
           </LoginButton>
           <ErrorMessage>{error}</ErrorMessage>
-          <CreateAccount onPress={goToSignUp}>회원가입</CreateAccount>
+          <CreateAccount onPress={goToSignUp}>회원가입 ▶</CreateAccount>
         </LoginBtnContainer>
       </LoginContainer>
     </Container>

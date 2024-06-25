@@ -1,20 +1,24 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
-import home from "../screens/home/homeScreen";
-import profile from "../screens/profile";
+import HomeScreen from "../screens/home/homeScreen"; // 올바른 경로와 대문자 사용
+import ProfileScreen from "../screens/profile"; // 올바른 경로와 대문자 사용
+import CommunityScreen from "../screens/community"; // 잘못된 철자 수정
 
 type TabStackList = {
+  Community: undefined;
   Main: undefined;
   Profile: undefined;
 };
 
 const Tab = createBottomTabNavigator<TabStackList>();
 
-export default () => {
+export default function TabNavigator() {
   const getIconName = (pageName: keyof TabStackList) => {
     switch (pageName) {
+      case "Community":
+        return "people";
       case "Main":
-        return "apps-sharp";
+        return "home";
       case "Profile":
         return "person";
       default:
@@ -24,23 +28,32 @@ export default () => {
 
   return (
     <Tab.Navigator
-      screenOptions={(route) => ({
+      screenOptions={({ route }) => ({
         tabBarShowLabel: false,
-        tabBarActiveTintColor: "#43a7ff",
+        tabBarActiveTintColor: "#D2B48C",
         tabBarInactiveTintColor: "darkgray",
         tabBarIcon: ({ color, size }) => {
-          return (
-            <Ionicons
-              name={getIconName(route.route.name)}
-              size={size}
-              color={color}
-            />
-          );
+          const iconName = getIconName(route.name);
+          return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}
+      initialRouteName="Main"
     >
-      <Tab.Screen name="Main" component={home} />
-      <Tab.Screen name="Profile" component={profile} />
+      <Tab.Screen
+        name="Community"
+        component={CommunityScreen}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Main"
+        component={HomeScreen}
+        options={{ headerShown: false }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{ headerShown: false }}
+      />
     </Tab.Navigator>
   );
-};
+}

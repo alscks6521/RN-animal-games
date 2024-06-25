@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ProfileScreen from "./profileScreen";
 import { auth } from "../../firebaseConfig";
 import { User, signOut } from "firebase/auth";
 import { Alert, Linking } from "react-native";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default () => {
   // 1. 데이터를 불러오고, 가공하고, 수정한다
@@ -30,7 +32,39 @@ export default () => {
       setUser(user);
     }
   };
+  const [isAnimalSelected, setIsAnimalSelected] = useState(null);
+
+  const checkAnimalSelection = useCallback(async () => {
+    const user = auth.currentUser;
+    if (user) {
+      const db = getFirestore();
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const selectedAnimalId = userData?.selectedAnimalId;
+        setIsAnimalSelected(selectedAnimalId);
+      } else {
+        setIsAnimalSelected(null);
+      }
+    } else {
+      setIsAnimalSelected(null);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      checkAnimalSelection();
+    }, [checkAnimalSelection])
+  );
 
   // 2. 가공한 데이터를 Presenter에 넘겨준다.
-  return <ProfileScreen user={user} onSignout={onSignout} />;
+  return (
+    <ProfileScreen
+      user={user}
+      onSignout={onSignout}
+      isAnimalSelected={isAnimalSelected}
+    />
+  );
 };

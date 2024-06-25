@@ -1,51 +1,15 @@
 // HomeContainer.tsx
 import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { View, Text, TouchableOpacity, Animated } from "react-native";
-import styled from "styled-components/native";
 import { auth } from "../../firebaseConfig";
 import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import * as FileSystem from "expo-file-system";
+import LoadingScreen from "../loadingScreen";
+import HomeScreen from "./homeContainerScreen";
+import { Animal } from "../../components/HomeTypes";
+import { Animated, Text, TouchableOpacity, View } from "react-native";
+import styled from "styled-components";
 
-type Animal = {
-  id: string;
-  type: string;
-  level: number;
-  experience: number;
-  imageUrl: string;
-  moveGifUrl: string;
-  blinkGifUrl: string;
-};
-
-// A구역 가로정렬------------------------------
-const HomeBox = styled(View)`
-  background-color: transparent;
-  width: 100%;
-  height: 100%;
-  flex-direction: row;
-`;
-// A-A구역------------------------------
-const LeftBox = styled(View)`
-  flex: 1;
-  background-color: transparent;
-`;
-const AnimalNameBox = styled(View)`
-  background-color: rgba(255, 255, 255, 0.7);
-  border-radius: 0px 15px 15px 0px;
-  margin: 10px 0px 0px 0px;
-`;
-const AnimalName = styled(Text)`
-  font-size: 18px;
-  font-weight: bold;
-  padding: 8px;
-`;
-// A-B구역------------------------------
-const ImageBox = styled(View)`
-  flex: 3;
-  justify-content: flex-end;
-  padding-bottom: 5%;
-  position: relative;
-`;
 const AnimalImage = React.memo(styled(Animated.Image)`
   width: 180px;
   height: 180px;
@@ -53,24 +17,7 @@ const AnimalImage = React.memo(styled(Animated.Image)`
   bottom: 0;
 `);
 
-// A-C구역------------------------------
-const RightBox = styled(View)`
-  flex: 1;
-  background-color: transparent;
-`;
-const StyledButton = styled(TouchableOpacity)`
-  background-color: #4fadff;
-  border-radius: 15px;
-  margin: 5px 0px 0px 5px;
-`;
-const LevelText = styled(AnimalName)`
-  font-size: 18px;
-  font-weight: bold;
-  color: white;
-  padding: 8px;
-`;
-
-const BubbleContainer = styled.View`
+const BubbleContainer = styled(View)`
   flex-direction: column;
   align-items: center;
   position: absolute;
@@ -102,15 +49,6 @@ const SpeechText = styled(Text)`
   font-size: 16px;
   color: #333;
 `;
-
-const dialogues = [
-  "안녕하세요!",
-  "오늘 하루도 화이팅해요!",
-  "저는 당신의 친구에요.",
-  "함께 행복한 시간 보내요.",
-  "좋은 하루 되세요!",
-  // 더 많은 대화를 추가할 수 있습니다.
-];
 
 // 캐시 이미지 URI 다운 및 캐시저장
 const fetchCachedImage = async (
@@ -155,23 +93,51 @@ const fetchBlinkGifUrl = async (
   return gifUrl;
 };
 
+const dialogues = [
+  // "안녕하세요!",
+  // "오늘 하루도 화이팅해요!",
+  // "저는 당신의 친구에요.",
+  // "함께 행복한 시간 보내요.",
+  // "좋은 하루 되세요!",
+  "교수님! A학점 주세요! 혹시 +도 같이?... 탕탕",
+  "리액트네이티브 재밌다",
+  "교수님 그 동안 감사했습니다",
+];
+
 const HomeContainer: React.FC = () => {
   const [animal, setAnimal] = useState<Animal | null>(null);
   const [animalSource, setAnimalSource] = useState<string | null>(null);
   const [showSpeechBubble, setShowSpeechBubble] = useState(false);
   const [randomDialogue, setRandomDialogue] = useState("");
   const [moveGif, setMoveGif] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [showLevelUpModal, setShowLevelUpModal] = useState(false);
 
   const handleImageClick = useCallback(() => {
+    if (showSpeechBubble) return;
+
     const randomIndex = Math.floor(Math.random() * dialogues.length);
     setRandomDialogue(dialogues[randomIndex]);
-    setShowSpeechBubble(true);
+    setShowSpeechBubble(true); // 레벨업 모달 표시
 
-    // 2.5초 후에 말풍선 숨기기
     setTimeout(() => {
       setShowSpeechBubble(false);
-    }, 2500);
-  }, []);
+    }, 1300);
+  }, [showSpeechBubble]);
+
+  const showBubble = useCallback(
+    (str: string) => {
+      if (showSpeechBubble) return; // 말풍선이 보이는 동안 클릭 막기
+
+      setRandomDialogue(str);
+      setShowSpeechBubble(true);
+
+      setTimeout(() => {
+        setShowSpeechBubble(false);
+      }, 1300);
+    },
+    [showSpeechBubble]
+  );
 
   const levelUp = useCallback(async () => {
     if (animal) {
@@ -179,40 +145,44 @@ const HomeContainer: React.FC = () => {
       const animalDocRef = doc(db, "user_animals", animal.id);
       const newLevel = animal.level + 1;
       await updateDoc(animalDocRef, { level: newLevel });
+
       fetchSelectedAnimal();
+      setShowLevelUpModal(true);
     }
   }, [animal]);
+
+  const closeLevelUpModal = useCallback(() => {
+    setShowLevelUpModal(false);
+  }, []);
 
   const eatUp = useCallback(async () => {
     if (animal) {
       const db = getFirestore();
       const animalDocRef = doc(db, "user_animals", animal.id);
-      let addExperience = animal.experience + 10;
-      console.log("animal class :" + animal.experience);
+      let addExperience = animal.experience + 50;
+
+      showBubble("냠냠냠");
 
       if (addExperience >= 100) {
-        console.log("level up!");
         await levelUp();
-
         addExperience = 0;
       }
 
       await updateDoc(animalDocRef, { experience: addExperience });
       fetchSelectedAnimal();
     }
-  }, [animal]);
+  }, [animal, showSpeechBubble]);
 
   const plays = useCallback(async () => {
     if (animal) {
       const db = getFirestore();
       const animalDocRef = doc(db, "user_animals", animal.id);
-      let addExperience = animal.experience + 10;
-      console.log("animal class :" + animal.experience);
+      let addExperience = animal.experience + 90;
+
+      showBubble("살이 쪄서 걷기 힘드네..");
 
       if (addExperience >= 100) {
-        console.log("level up!");
         await levelUp();
-
         addExperience = 0;
       }
 
@@ -222,7 +192,7 @@ const HomeContainer: React.FC = () => {
       setMoveGif(true); // move.gif 실행
       setTimeout(() => {
         setMoveGif(false); // 일정 시간 후에 blink로 교체
-      }, 2000); // 2초 후에 교체 (필요에 따라 시간 조정 가능)
+      }, 2000);
     }
   }, [animal]);
 
@@ -289,7 +259,6 @@ const HomeContainer: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    console.log("useEffect");
     if (animal?.blinkGifUrl) {
       setAnimalSource(animal.blinkGifUrl);
     }
@@ -298,6 +267,9 @@ const HomeContainer: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       await fetchSelectedAnimal();
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
     };
     fetchData();
   }, [fetchSelectedAnimal]);
@@ -332,25 +304,25 @@ const HomeContainer: React.FC = () => {
     animal,
   ]);
 
-  return animal ? (
-    <HomeBox>
-      <LeftBox>
-        <AnimalNameBox>
-          <AnimalName>{`Level ${animal.level}`}</AnimalName>
-          <AnimalName>{`Xp ${animal.experience}`}</AnimalName>
-        </AnimalNameBox>
-      </LeftBox>
-      <ImageBox>{memoizedMoveImages}</ImageBox>
-      <RightBox>
-        <StyledButton onPress={eatUp}>
-          <LevelText>Eat</LevelText>
-        </StyledButton>
-        <StyledButton onPress={plays}>
-          <LevelText>Play</LevelText>
-        </StyledButton>
-      </RightBox>
-    </HomeBox>
-  ) : null;
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <HomeScreen
+      animal={animal}
+      animalSource={animalSource}
+      showSpeechBubble={showSpeechBubble}
+      randomDialogue={randomDialogue}
+      moveGif={moveGif}
+      showLevelUpModal={showLevelUpModal}
+      handleImageClick={handleImageClick}
+      eatUp={eatUp}
+      plays={plays}
+      closeLevelUpModal={closeLevelUpModal}
+      memoizedMoveImages={memoizedMoveImages}
+    />
+  );
 };
 
 export default HomeContainer;
