@@ -24,18 +24,12 @@ const Email = styled(Text)`
   color: grey;
 `;
 
-const JoinDate = styled(Text)`
-  font-size: 20px;
-  font-weight: 400;
-  color: grey;
-`;
-
 const ProfileImg = styled(Image)`
   width: 100px;
-  height: 150px;
+  aspect-ratio: 2/3;
   background-color: white;
   margin-right: 10px;
-  border-radius: 5px;
+  border-radius: 20px;
 `;
 
 type Props = {
@@ -51,8 +45,8 @@ export default ({ user }: Props) => {
 
         <Data>
           <Name>{user?.displayName}</Name>
+
           <Email>{user?.email}</Email>
-          <JoinDate>{user?.metadata.creationTime}</JoinDate>
         </Data>
       </Info>
     </Container>
