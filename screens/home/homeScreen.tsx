@@ -24,10 +24,10 @@ const Container = styled(ImageBackground)`
 
 // B구역 CreateText------------------------------------------------------------
 const CreateAccount = styled(Text)`
-  color: #4fadff;
-  text-decoration: underline;
+  color: #fff;
   text-align: center;
-  z-index: 100;
+  font-size: 22px;
+  font-weight: 600;
   margin-bottom: 10px;
 `;
 
@@ -35,7 +35,7 @@ const CreateAccount = styled(Text)`
 const SelectContainer = styled(View)`
   background-color: rgb(255, 255, 255);
   width: 80%;
-  height: 50%;
+  height: 60%;
   border-radius: 15px;
   align-items: center;
   padding: 20px;
@@ -45,6 +45,17 @@ const SelectText = styled(Text)`
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 10px;
+`;
+
+const TouchContainer = styled(TouchableOpacity)`
+  border: 1px solid #2097ff;
+  background-color: #2097ff;
+  border-radius: 12px;
+  margin-top: 40px;
+  align-items: center;
+  justify-content: center;
+  width: 180px;
+  height: 40%;
 `;
 
 // 배경
@@ -111,9 +122,9 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
           <SelectContainer>
             <SelectText>반가워요!</SelectText>
             <SelectText>동물들을 보러 가실래요?</SelectText>
-            <TouchableOpacity onPress={goToAnimalSelection}>
+            <TouchContainer onPress={goToAnimalSelection}>
               <CreateAccount>선택하러 가기</CreateAccount>
-            </TouchableOpacity>
+            </TouchContainer>
           </SelectContainer>
         </SafeAreaView>
       )}

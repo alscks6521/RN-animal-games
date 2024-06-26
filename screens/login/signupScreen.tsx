@@ -176,7 +176,7 @@ export default () => {
         currentAnimal: null,
       });
 
-      Alert.alert("Account Created!", "", [
+      Alert.alert("가입 완료", "", [
         {
           onPress: () => goToSignIn(),
         },

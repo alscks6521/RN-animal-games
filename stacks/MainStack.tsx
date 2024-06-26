@@ -18,7 +18,16 @@ export default () => {
         component={Tabs}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="AnimalSelectionScreen" component={AnimalSelect} />
+      <Stack.Screen
+        name="AnimalSelectionScreen"
+        component={AnimalSelect}
+        options={{
+          headerBackTitleVisible: false,
+          headerTitle: "",
+          headerTransparent: true,
+          headerTintColor: "black",
+        }}
+      />
     </Stack.Navigator>
   );
 };
