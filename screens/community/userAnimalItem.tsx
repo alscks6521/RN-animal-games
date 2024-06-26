@@ -1,5 +1,6 @@
+// userAnimalItem.tsx
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { UserAnimal } from "./communityScreen";
 import { Image } from "expo-image";
@@ -9,9 +10,10 @@ import * as FileSystem from "expo-file-system";
 type Props = {
   item: UserAnimal;
   index: number;
+  onPress: () => void;
 };
 
-const CardContainer = styled(View)`
+const CardContainer = styled(TouchableOpacity)`
   background-color: white;
   border-radius: 10px;
   padding: 20px;
@@ -52,7 +54,6 @@ const TextContainer = styled(View)`
 const StyledText = styled(Text)`
   font-size: 16px;
   font-weight: 600;
-
   margin: 10px 5px;
 `;
 
@@ -83,7 +84,7 @@ const RankText = styled(Text)`
   color: #fff;
 `;
 
-const UserAnimalItem: React.FC<Props> = ({ item, index }) => {
+const UserAnimalItem: React.FC<Props> = ({ item, index, onPress }) => {
   const [imageUri, setImageUri] = React.useState<string>("");
 
   // 캐시 이미지 URI 다운 및 캐시저장
@@ -125,7 +126,7 @@ const UserAnimalItem: React.FC<Props> = ({ item, index }) => {
   }, [item.animalId, item.level]);
 
   return (
-    <CardContainer>
+    <CardContainer onPress={onPress}>
       {index < 3 && (
         <RankContainer rank={index + 1}>
           <RankText>{index + 1}등</RankText>
@@ -143,7 +144,7 @@ const UserAnimalItem: React.FC<Props> = ({ item, index }) => {
             <StyledText>동물 타입: {item.animalId}</StyledText>
           </TextContainer>
           <LevelText>레벨: {item.level}</LevelText>
-          <LevelText>하트: {item.likes}</LevelText>
+          <LevelText>좋아요:{Object.keys(item.likes).length}</LevelText>
         </InfoContainer>
       </ItemContainer>
     </CardContainer>

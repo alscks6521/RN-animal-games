@@ -157,6 +157,7 @@ interface HomeScreenProps {
   handleImageClick: () => void;
   eatUp: () => void;
   plays: () => void;
+  highUp: () => void;
   closeLevelUpModal: () => void;
   memoizedMoveImages: JSX.Element | null;
 }
@@ -167,6 +168,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   showLevelUpModal,
   eatUp,
   plays,
+  highUp,
   closeLevelUpModal,
   memoizedMoveImages,
 }) => {
@@ -186,6 +188,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           </EatStyledButton>
           <PlayStyledButton onPress={plays} disabled={showSpeechBubble}>
             <LevelText>걷기운동</LevelText>
+          </PlayStyledButton>
+          <PlayStyledButton onPress={highUp}>
+            <LevelText>레벨업</LevelText>
           </PlayStyledButton>
         </RightBox>
       </HomeBox>

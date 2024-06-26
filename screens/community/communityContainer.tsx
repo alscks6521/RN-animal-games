@@ -6,11 +6,16 @@ import UserAnimalItem from "./userAnimalItem";
 
 type Props = {
   userAnimals: UserAnimal[];
+  onUserPress: (userAnimal: UserAnimal) => void;
 };
 
-const CommunityContainer: React.FC<Props> = ({ userAnimals }) => {
+const CommunityContainer: React.FC<Props> = ({ userAnimals, onUserPress }) => {
   const renderItem = ({ item, index }: { item: UserAnimal; index: number }) => (
-    <UserAnimalItem item={item} index={index} />
+    <UserAnimalItem
+      item={item}
+      index={index}
+      onPress={() => onUserPress(item)}
+    />
   );
 
   return (

@@ -112,6 +112,7 @@ const HomeContainer: React.FC = () => {
   const [moveGif, setMoveGif] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
+  const db = getFirestore();
 
   const handleImageClick = useCallback(() => {
     if (showSpeechBubble) return;
@@ -141,7 +142,6 @@ const HomeContainer: React.FC = () => {
 
   const levelUp = useCallback(async () => {
     if (animal) {
-      const db = getFirestore();
       const animalDocRef = doc(db, "user_animals", animal.id);
       const newLevel = animal.level + 1;
       await updateDoc(animalDocRef, { level: newLevel });
@@ -155,9 +155,19 @@ const HomeContainer: React.FC = () => {
     setShowLevelUpModal(false);
   }, []);
 
+  const highUp = useCallback(async () => {
+    if (animal) {
+      const animalDocRef = doc(db, "user_animals", animal.id);
+      const newLevel = animal.level + 6;
+      await updateDoc(animalDocRef, { level: newLevel });
+
+      fetchSelectedAnimal();
+      setShowLevelUpModal(true);
+    }
+  }, [animal]);
+
   const eatUp = useCallback(async () => {
     if (animal) {
-      const db = getFirestore();
       const animalDocRef = doc(db, "user_animals", animal.id);
       let addExperience = animal.experience + 50;
 
@@ -175,7 +185,6 @@ const HomeContainer: React.FC = () => {
 
   const plays = useCallback(async () => {
     if (animal) {
-      const db = getFirestore();
       const animalDocRef = doc(db, "user_animals", animal.id);
       let addExperience = animal.experience + 90;
 
@@ -319,6 +328,7 @@ const HomeContainer: React.FC = () => {
       handleImageClick={handleImageClick}
       eatUp={eatUp}
       plays={plays}
+      highUp={highUp}
       closeLevelUpModal={closeLevelUpModal}
       memoizedMoveImages={memoizedMoveImages}
     />
