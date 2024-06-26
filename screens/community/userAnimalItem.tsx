@@ -57,10 +57,7 @@ const StyledText = styled(Text)`
   margin: 10px 5px;
 `;
 
-const LevelText = styled(Text)`
-  font-size: 16px;
-  font-weight: 600;
-`;
+const LevelText = styled(StyledText)``;
 
 const RankContainer = styled(View)<{ rank: number }>`
   position: absolute;
@@ -143,8 +140,10 @@ const UserAnimalItem: React.FC<Props> = ({ item, index, onPress }) => {
             <StyledText>유저: {item.displayName}</StyledText>
             <StyledText>동물 타입: {item.animalId}</StyledText>
           </TextContainer>
-          <LevelText>레벨: {item.level}</LevelText>
-          <LevelText>좋아요:{Object.keys(item.likes).length}</LevelText>
+          <TextContainer>
+            <LevelText>레벨: {item.level}</LevelText>
+            <LevelText>하트: {Object.keys(item.likes).length}</LevelText>
+          </TextContainer>
         </InfoContainer>
       </ItemContainer>
     </CardContainer>

@@ -6,8 +6,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Image,
-  Animated,
 } from "react-native";
 import styled from "styled-components/native";
 import { Animal } from "../../components/HomeTypes";
@@ -80,12 +78,6 @@ const ImageBox = styled(View)`
   padding-bottom: 5%;
   position: relative;
 `;
-const AnimalImage = React.memo(styled(Animated.Image)`
-  width: 180px;
-  height: 180px;
-  position: absolute;
-  bottom: 0;
-`);
 
 // A-C구역------------------------------
 const RightBox = styled(View)`
@@ -112,39 +104,6 @@ const LevelText = styled(AnimalName)`
   font-weight: bold;
   color: white;
   padding: 8px;
-`;
-
-const BubbleContainer = styled.View`
-  flex-direction: column;
-  align-items: center;
-  position: absolute;
-  bottom: 200px;
-  z-index: 1;
-`;
-
-// 말풍선 스타일 정의
-const SpeechBubble = styled(View)`
-  background-color: #ffffff;
-  padding: 10px 20px;
-  border-radius: 10px;
-  border-width: 1px;
-  border-color: #cccccc;
-`;
-
-const Tail = styled(View)`
-  width: 20px;
-  height: 20px;
-  background-color: #ffffff;
-  border-left-width: 1px;
-  border-bottom-width: 1px;
-  border-color: #cccccc;
-  transform: rotate(-45deg);
-  margin-top: -10px;
-`;
-
-const SpeechText = styled(Text)`
-  font-size: 16px;
-  color: #333;
 `;
 
 interface HomeScreenProps {

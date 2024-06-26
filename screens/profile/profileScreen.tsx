@@ -70,7 +70,6 @@ type Props = {
   isAnimalSelected: any;
 };
 
-// function : function & arrow func
 export default ({ user, onSignout, isAnimalSelected }: Props) => {
   return (
     <ScrollBox>

@@ -76,6 +76,7 @@ const fetchMoveGifUrl = async (
   animalLevel: string,
   storage: any
 ) => {
+  console.log(animalLevel);
   const gifUrl = await getDownloadURL(
     ref(storage, `${animalType}/${animalLevel}/${animalType}_move.gif`)
   );
@@ -175,7 +176,7 @@ const HomeContainer: React.FC = () => {
 
       if (addExperience >= 100) {
         await levelUp();
-        addExperience = 0;
+        addExperience = addExperience - 100;
       }
 
       await updateDoc(animalDocRef, { experience: addExperience });
@@ -192,7 +193,8 @@ const HomeContainer: React.FC = () => {
 
       if (addExperience >= 100) {
         await levelUp();
-        addExperience = 0;
+
+        addExperience = addExperience - 100;
       }
 
       await updateDoc(animalDocRef, { experience: addExperience });
@@ -231,6 +233,7 @@ const HomeContainer: React.FC = () => {
             const level = animalData?.level;
             const experience = animalData?.experience;
             const imagelevel = `${animalType}${level <= 10 ? "1" : "2"}`;
+            console.log("Fetch");
 
             const imageUrl = await fetchCachedImage(
               animalType,

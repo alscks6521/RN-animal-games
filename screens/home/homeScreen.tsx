@@ -1,4 +1,3 @@
-// HomeScreen.tsx
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ImageBackground,
@@ -82,7 +81,6 @@ const HomeScreen = ({ navigation }: HomeScreenProps) => {
         const userData = userDoc.data();
         const selectedAnimalId = userData?.selectedAnimalId;
         setIsAnimalSelected(selectedAnimalId ? true : false);
-        console.log("check?,", selectedAnimalId);
       } else {
         setIsAnimalSelected(false);
       }
