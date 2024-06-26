@@ -1,41 +1,70 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+// communityScreen.tsx
+import React, { useEffect, useState } from "react";
+import { Image, SafeAreaView, Text, View } from "react-native";
+import {
+  getFirestore,
+  collection,
+  query,
+  orderBy,
+  onSnapshot,
+} from "firebase/firestore";
+import CommunityContainer from "./communityContainer";
 import styled from "styled-components";
 
-const ScrollBox = styled(ScrollView)`
-  flex: 1;
-  background-color: white;
-`;
-const Header = styled(View)`
-  padding: 0px 30px;
-  height: 300px;
-  justify-content: flex-end;
-  bottom: -20px;
-  z-index: 99;
-`;
-const Body = styled(View)`
-  height: 500px;
-  background-color: lightgray;
+export type UserAnimal = {
+  id: string;
+  displayName: string;
+  userId: string;
+  animalId: string;
+  likes: number;
+  level: number;
+  experience: number;
+};
+
+const ComTitleBox = styled(View)`
+  align-items: center;
+  background-color: transparent;
 `;
 
-const SignoutButton = styled(TouchableOpacity)`
-  background-color: #e1e1e1;
-  border-radius: 4px;
-  padding: 5px 15px;
+const ComTitle = styled(Image)`
+  height: 120px;
 `;
 
-const SignoutTtitle = styled(Text)`
-  color: #7c7c7c;
-  text-align: center;
-`;
+const imgDir = require("../../assets/rank-title.png");
 
-// function : function & arrow func
-export default () => {
+const db = getFirestore();
+
+const CommunityScreen = () => {
+  const [userAnimals, setUserAnimals] = useState<UserAnimal[]>([]);
+
+  useEffect(() => {
+    const unsubscribe = fetchUserAnimals();
+    return () => unsubscribe();
+  }, []);
+
+  const fetchUserAnimals = () => {
+    const q = query(collection(db, "user_animals"), orderBy("level", "desc"));
+    return onSnapshot(q, (snapshot) => {
+      const fetchedUserAnimals: UserAnimal[] = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        userId: doc.data().userId,
+        animalId: doc.data().animalId,
+        level: doc.data().level,
+        experience: doc.data().experience,
+        displayName: doc.data().displayName,
+        likes: doc.data().likes,
+      }));
+      setUserAnimals(fetchedUserAnimals);
+    });
+  };
   return (
-    <ScrollBox>
-      <Header></Header>
-      <Body></Body>
-      <SignoutButton></SignoutButton>
-    </ScrollBox>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ComTitleBox>
+        <ComTitle source={imgDir} resizeMode="contain" />
+      </ComTitleBox>
+      <CommunityContainer userAnimals={userAnimals} />
+    </SafeAreaView>
   );
 };
+
+export default CommunityScreen;

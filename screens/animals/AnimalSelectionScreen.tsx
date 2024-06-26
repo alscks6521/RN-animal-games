@@ -73,6 +73,8 @@ export default () => {
           animalId: animal.id,
           level: 0,
           experience: 0,
+          displayName: user.displayName,
+          likes: 0,
         },
         { merge: true }
       );

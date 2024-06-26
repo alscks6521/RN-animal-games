@@ -1,3 +1,2 @@
-import community from "./communityContainer";
-
-export default community;
+import CommunityScreen from "./communityScreen";
+export default CommunityScreen;
