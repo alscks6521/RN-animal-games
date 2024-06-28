@@ -23,27 +23,25 @@ import { doc, getFirestore, setDoc } from "firebase/firestore";
 const Container = styled(ImageBackground)`
   justify-content: center;
   align-items: center;
-  background-color: #bb5cff;
+  background-color: #fff;
   flex: 1;
 `;
 
-const LogoImg = styled(Image)`
-  width: 100%;
-  height: 30%;
-`;
-
 const Title = styled(Text)`
-  font-size: 14px;
+  font-size: 16px;
+  line-height: 25px;
   font-weight: 700;
-  color: #7b0072;
+  color: #1a74e8;
   margin-bottom: 10px;
 `;
 
 const SignBox = styled(View)`
-  background-color: white;
-  width: 80%;
+  background-color: rgb(255, 255, 255);
+  margin-top: 60%;
+  width: 88%;
+  height: 40%;
+  border-radius: 15px;
   padding: 20px;
-  border-radius: 10px;
 `;
 
 // Footer (Signin Btn, Create Account)
@@ -60,11 +58,6 @@ const SignUpTitle = styled(Text)`
   font-size: 15px;
 `;
 
-const CreationGuide = styled(Text)`
-  color: #acacac;
-  text-align: center;
-`;
-
 const CreateAccount = styled(Text)`
   color: #4fadff;
   text-decoration: underline;
@@ -79,7 +72,7 @@ const InputField = styled(View)`
 
 const UserId = styled(TextInput)`
   background-color: #efeded;
-  margin-bottom: 7px;
+  margin-bottom: 10px;
   font-size: 17px;
   padding: 5px 12px;
 `;
@@ -96,6 +89,8 @@ const ErrorMessage = styled(Text)`
   font-size: 15px;
 `;
 const db = getFirestore();
+
+const BGImgDir = require("../../assets/splash.png");
 
 //------------------------------------------------------------------------
 
@@ -119,8 +114,9 @@ export default () => {
 
   // moving screen to signin page.
   const goToSignIn = () => {
-    navigation.navigate("SignIn");
+    // 로그인 성공
     // navigation.goBack();
+    // navigation.navigate("SignIn");
   };
 
   // onChange  Text ( 사용자 입력에 따라 변경된 Input Text )
@@ -161,20 +157,15 @@ export default () => {
       // error message reset
       setError("");
 
-      // // firebase auth create user
-      // const credential = await createUserWithEmailAndPassword(
-      //   auth,
-      //   email,
-      //   password
-      // );
-      // // 업데이트 유저 프로필 이름
-      // await updateProfile(credential.user, { displayName: name });
+      // 생성
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
+
       const user = userCredential.user;
+      // 업데이트 유저 프로필 이름
       await updateProfile(user, { displayName: name });
 
       // Firestore에 사용자 문서 생성
@@ -185,7 +176,7 @@ export default () => {
         currentAnimal: null,
       });
 
-      Alert.alert("Account Created!", "", [
+      Alert.alert("가입 완료", "", [
         {
           onPress: () => goToSignIn(),
         },
@@ -203,27 +194,27 @@ export default () => {
 
   // Screen Design
   return (
-    <Container>
+    <Container source={BGImgDir}>
       <SignBox>
         {/* resize = 영역안 크기에 맞게 */}
-        <LogoImg />
-        <Title>{"Nice to meet you \nCreate"}</Title>
-        <Title>App!</Title>
+
+        <Title>회원가입을 위해{"\n"}정보를 입력해주세요.</Title>
+
         <InputField>
           <UserName
-            placeholder="Name"
+            placeholder="이름"
             value={name}
             onChange={(e) => onChangeText(e, "name")}
           />
           <UserId
-            placeholder="Email"
+            placeholder="이메일"
             keyboardType="email-address"
             returnKeyType="next"
             value={email}
             onChange={(e) => onChangeText(e, "email")}
           />
           <UserPw
-            placeholder="PW"
+            placeholder="패스워드"
             secureTextEntry={true}
             keyboardType="visible-password"
             returnKeyType="done"
@@ -236,9 +227,7 @@ export default () => {
         <Footer>
           {/* <SignUpButton onPress={onSubmit}> */}
           <SignUpButton onPress={() => onSubmit()} disabled={loading}>
-            <SignUpTitle>
-              {loading ? "loading..." : "Create Account"}
-            </SignUpTitle>
+            <SignUpTitle>{loading ? "loading..." : "완료"}</SignUpTitle>
           </SignUpButton>
         </Footer>
       </SignBox>

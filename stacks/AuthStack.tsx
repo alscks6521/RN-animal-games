@@ -1,6 +1,6 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import signin from "../screens/login/signinScreen";
-import signup from "../screens/login/signupScreen";
+import SignInScreen from "../screens/login/signinScreen"; // 대문자 'S'로 수정
+import SignUpScreen from "../screens/login/signupScreen"; // 대문자 'S'로 수정
 
 // 이동할 스크린 StackNavigator : type 지정
 export type AuthStackScreenList = {
@@ -11,12 +11,24 @@ export type AuthStackScreenList = {
 // StackNavigator 생성
 const Stack = createStackNavigator<AuthStackScreenList>();
 
-export default () => {
-  // Stack안에 이동할 페이지 만들어 그룹화
+export default function AuthStack() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="SignIn" component={signin} />
-      <Stack.Screen name="SignUp" component={signup} />
+    <Stack.Navigator initialRouteName="SignIn">
+      <Stack.Screen
+        name="SignIn"
+        component={SignInScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="SignUp"
+        component={SignUpScreen}
+        options={{
+          headerBackTitleVisible: false,
+          headerTitle: "Pick Mate",
+          headerTransparent: true,
+          headerTintColor: "black",
+        }}
+      />
     </Stack.Navigator>
   );
-};
+}

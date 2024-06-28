@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, FlatList, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import {
   getFirestore,
   collection,
@@ -9,21 +9,23 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { Image } from "expo-image";
+import Swiper from "react-native-swiper";
 import { auth } from "../../firebaseConfig";
-
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import { useNavigation } from "@react-navigation/native";
 
-interface Animal {
+export type Animal = {
   id: string;
   imageUrl: string;
   type: string;
-}
+};
 
 const db = getFirestore();
 const storage = getStorage();
 
 export default () => {
   const [animals, setAnimals] = useState<Animal[]>([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     console.log("동물 선택 스크린");
@@ -31,6 +33,7 @@ export default () => {
   }, []);
 
   const fetchAnimals = async () => {
+    setAnimals([]); // 초기화
     const querySnapshot = await getDocs(collection(db, "animals"));
 
     const fetchedAnimals: Animal[] = await Promise.all(
@@ -46,6 +49,9 @@ export default () => {
         };
       })
     );
+
+    console.log("Fetched Animals:", fetchedAnimals.length, fetchedAnimals);
+    fetchedAnimals.reverse();
     setAnimals(fetchedAnimals);
   };
 
@@ -71,32 +77,52 @@ export default () => {
         { merge: true }
       );
 
-      Alert.alert("Animal Selected", `You have selected the ${animal.type}`);
+      Alert.alert("선택하셨네요!", `${animal.type.toUpperCase()}와 함께해요!`);
+      navigation.goBack();
     } else {
       Alert.alert("Error", "No user is signed in.");
     }
   };
 
-  const renderAnimalItem = ({ item }: { item: Animal }) => (
-    <TouchableOpacity
-      onPress={() => handleSelectAnimal(item)}
-      style={{ margin: 10, alignItems: "center" }}
-    >
-      <Image
-        source={{ uri: item.imageUrl }}
-        style={{ width: 150, height: 150, borderRadius: 75 }}
-      />
-      <Text>{item.type}</Text>
-    </TouchableOpacity>
-  );
-
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <FlatList
-        data={animals}
-        keyExtractor={(item) => item.id}
-        renderItem={renderAnimalItem}
-      />
+    <View style={{ flex: 1 }}>
+      {animals.length > 0 ? (
+        <Swiper showsButtons={true} loop={false} showsPagination={true}>
+          {animals.map((animal) => (
+            <View
+              key={animal.id}
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Image
+                source={{ uri: animal.imageUrl }}
+                style={{ width: 300, height: 300, resizeMode: "contain" }}
+              />
+              <Text style={{ marginTop: 20, fontSize: 24, fontWeight: "800" }}>
+                {animal.type.toUpperCase()}
+              </Text>
+              <TouchableOpacity
+                onPress={() => handleSelectAnimal(animal)}
+                style={{
+                  marginTop: 20,
+                  padding: 20,
+                  width: 200,
+                  alignItems: "center",
+                  borderRadius: 12,
+                  backgroundColor: "#2097ff",
+                }}
+              >
+                <Text style={{ color: "white", fontSize: 24 }}>선택</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </Swiper>
+      ) : (
+        <Text>Loading...</Text>
+      )}
     </View>
   );
 };
